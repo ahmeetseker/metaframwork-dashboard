@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { CircleAlert } from 'lucide-react'
 import type { ModuleDef } from '@/lib/types'
 import { evaluateConditional } from '@/lib/conditional'
 import { validateValue } from '@/lib/validation'
@@ -60,7 +61,10 @@ export function SchemaForm({ module, initialValues = {}, onSubmit, submitLabel }
               })
             }} />
           {errors[field.name] && (
-            <p role="alert" className="text-xs text-destructive">{errors[field.name]}</p>
+            <p role="alert" className="flex items-center gap-1 text-xs text-destructive">
+              <CircleAlert className="size-3 shrink-0" aria-hidden="true" />
+              {errors[field.name]}
+            </p>
           )}
         </div>
       ))}

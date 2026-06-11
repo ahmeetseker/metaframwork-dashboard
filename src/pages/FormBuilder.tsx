@@ -88,6 +88,7 @@ export function FormBuilder() {
         </Select>
       </div>
 
+      <section className="glass p-5">
       <Tabs defaultValue="visual">
         <TabsList>
           <TabsTrigger value="visual">{t('builder.tabs.visual')}</TabsTrigger>
@@ -137,12 +138,13 @@ export function FormBuilder() {
 
         <TabsContent value="preview" className="pt-4">
           <p className="pb-4 text-xs text-muted-foreground">{t('builder.previewNote')}</p>
-          <div className="rounded-lg border bg-card p-5">
+          <div className="rounded-lg border border-border bg-foreground/5 p-5">
             <SchemaForm key={schemaJson} module={module} submitLabel={t('data.save')}
               onSubmit={() => toast.success(t('data.saved'))} />
           </div>
         </TabsContent>
       </Tabs>
+      </section>
 
       <FieldSheet module={module} field={selectedField} onClose={() => setSearchParams({})} />
     </div>

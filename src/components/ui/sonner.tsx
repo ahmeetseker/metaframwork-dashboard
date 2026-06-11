@@ -28,15 +28,22 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
+          // Toasts are repeated/stacked items (sonner shows up to 3), so per
+          // DESIGN.md §4 budgets they are NOT glass: no backdrop-filter, solid
+          // fallback fill instead — same geometry, zero blur cost.
+          "--normal-bg": "var(--glass-fallback)",
           "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+          "--normal-border": "transparent",
+          "--border-radius": "var(--radius-glass)",
         } as CSSProperties
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          // Compact floating surface (<360px) → sanctioned 16px glass radius.
+          // Overlay-tier drop + shadow stack + rim restated as important (same
+          // tokens) because sonner's unlayered box-shadow beats layered styles.
+          toast:
+            "cn-toast [--radius-glass:16px] [box-shadow:0_32px_80px_-20px_rgb(0_0_0/0.45),var(--glass-shadow),var(--glass-rim)]!",
         },
       }}
       {...props}

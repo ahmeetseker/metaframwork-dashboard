@@ -52,9 +52,9 @@ export function ThemePage() {
       </form>
 
       {variants.length > 0 && (
-        <section aria-label={t('theme.variants')} className="grid grid-cols-3 gap-3">
+        <section aria-label={t('theme.variants')} className="glass grid grid-cols-3 gap-3 p-4">
           {variants.map((v) => (
-            <div key={v.name} className="enter-rise space-y-2 rounded-lg border border-brass/40 bg-card p-3">
+            <div key={v.name} className="enter-rise space-y-2 rounded-lg border border-brass/40 bg-foreground/5 p-3">
               <div className="flex items-center gap-1.5">
                 <Swatch color={v.dark['--primary']} />
                 <Swatch color={v.light['--primary']} />
@@ -70,7 +70,7 @@ export function ThemePage() {
         </section>
       )}
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="glass grid grid-cols-2 gap-6 p-6">
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold">{t('theme.tokens')}</h2>
@@ -104,7 +104,7 @@ export function ThemePage() {
           </Button>
         </section>
 
-        <section aria-label={t('theme.preview')} className="space-y-3 rounded-lg border bg-card p-5">
+        <section aria-label={t('theme.preview')} className="space-y-3 rounded-lg border border-border bg-foreground/5 p-5">
           <p className="text-xs text-muted-foreground">{t('theme.preview')}</p>
           <h3 className="text-base font-semibold">{t('theme.sample.title')}</h3>
           <p className="text-sm text-muted-foreground">{t('theme.sample.body')}</p>

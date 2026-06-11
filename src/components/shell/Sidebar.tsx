@@ -28,7 +28,8 @@ const GROUPS = [
 export function Sidebar() {
   const modules = useStore((s) => s.modules)
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-5 overflow-y-auto border-r bg-card px-3 py-4">
+    <aside className="glass my-3 ml-3 flex w-56 shrink-0 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-3 py-4">
       {GROUPS.map((group) => (
         <nav key={group.label} aria-label={t(group.label)}>
           <p className="px-2 pb-1.5 text-xs font-medium text-muted-foreground">{t(group.label)}</p>
@@ -38,10 +39,10 @@ export function Sidebar() {
                 <NavLink to={item.to} end={item.to === '/'}
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors',
+                      'flex items-center gap-2.5 rounded-full px-3 py-1.5 text-sm transition-colors',
                       isActive
-                        ? 'bg-accent font-medium text-primary'
-                        : 'text-foreground/80 hover:bg-accent hover:text-foreground',
+                        ? 'bg-primary/10 font-medium text-primary'
+                        : 'text-foreground/80 hover:bg-foreground/5 hover:text-foreground',
                     )
                   }>
                   <item.icon className="size-4" aria-hidden />
@@ -53,8 +54,8 @@ export function Sidebar() {
                       <li key={m.id}>
                         <NavLink to={`/data/${m.id}`}
                           className={({ isActive }) =>
-                            cn('block rounded px-2 py-1 font-mono text-xs transition-colors',
-                              isActive ? 'bg-accent text-primary' : 'text-muted-foreground hover:bg-accent')
+                            cn('block rounded-full px-3 py-1 font-mono text-xs transition-colors',
+                              isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-foreground/5')
                           }>
                           {m.name}
                         </NavLink>
@@ -67,6 +68,7 @@ export function Sidebar() {
           </ul>
         </nav>
       ))}
+      </div>
     </aside>
   )
 }

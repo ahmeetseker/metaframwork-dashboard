@@ -27,7 +27,7 @@ export function Roles() {
           {roles.map((r) => <TabsTrigger key={r.id} value={r.id}>{r.name}</TabsTrigger>)}
         </TabsList>
       </Tabs>
-      <div className="rounded-lg border">
+      <div className="glass p-2">
         <Table>
           <TableHeader>
             <TableRow>

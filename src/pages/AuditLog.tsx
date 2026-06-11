@@ -18,7 +18,7 @@ export function AuditLog() {
       {audit.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t('audit.empty')}</p>
       ) : (
-        <div className="rounded-lg border">
+        <div className="glass p-2">
           <Table>
             <TableHeader>
               <TableRow>
@@ -56,7 +56,7 @@ export function AuditLog() {
           </SheetHeader>
           <div className="space-y-3 px-4">
             <p className="text-xs text-muted-foreground">{t('audit.payload')}</p>
-            <pre className="overflow-auto rounded-lg border bg-card p-3 font-mono text-xs leading-relaxed">
+            <pre className="overflow-auto rounded-lg border border-border bg-foreground/5 p-3 font-mono text-xs leading-relaxed">
               {JSON.stringify(selected?.payload ?? null, null, 2)}
             </pre>
           </div>

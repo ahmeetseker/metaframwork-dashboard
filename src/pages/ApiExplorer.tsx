@@ -61,14 +61,14 @@ export function ApiExplorer() {
       <h1 className="text-2xl font-semibold tracking-tight">{t('api.title')}</h1>
       <p className="text-sm text-muted-foreground">{t('api.note')}</p>
       <div className="grid grid-cols-[280px_1fr] gap-4">
-        <ScrollArea className="h-[480px] rounded-lg border">
+        <ScrollArea className="glass h-[480px]">
           <ul className="p-1.5">
             {endpoints.map((ep) => (
               <li key={`${ep.method}-${ep.path}`}>
                 <button type="button" onClick={() => { setActive(ep); setResponse(null) }}
                   className={cn(
-                    'press flex w-full items-center gap-2 rounded px-2 py-1.5 text-left font-mono text-xs transition-colors hover:bg-accent',
-                    active === ep && 'bg-accent',
+                    'press flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left font-mono text-xs transition-colors hover:bg-foreground/5',
+                    active === ep && 'bg-foreground/8',
                   )}>
                   <span className={cn('w-12 font-semibold', METHOD_STYLE[ep.method])}>{ep.method}</span>
                   {ep.path}
@@ -77,7 +77,7 @@ export function ApiExplorer() {
             ))}
           </ul>
         </ScrollArea>
-        <div className="space-y-3">
+        <div className="glass space-y-3 p-5">
           {active ? (
             <>
               <div className="flex items-center gap-2">
@@ -94,15 +94,15 @@ export function ApiExplorer() {
                   <TabsTrigger value="js">{t('api.jsLabel')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="response">
-                  <pre className="enter-rise h-[380px] overflow-auto rounded-lg border bg-card p-3 font-mono text-xs leading-relaxed">
+                  <pre className="enter-rise h-[380px] overflow-auto rounded-lg border bg-foreground/5 p-3 font-mono text-xs leading-relaxed">
                     {pending ? '…' : response ?? '—'}
                   </pre>
                 </TabsContent>
                 <TabsContent value="curl">
-                  <pre className="rounded-lg border bg-card p-3 font-mono text-xs">{snippet('curl')}</pre>
+                  <pre className="rounded-lg border bg-foreground/5 p-3 font-mono text-xs">{snippet('curl')}</pre>
                 </TabsContent>
                 <TabsContent value="js">
-                  <pre className="rounded-lg border bg-card p-3 font-mono text-xs">{snippet('js')}</pre>
+                  <pre className="rounded-lg border bg-foreground/5 p-3 font-mono text-xs">{snippet('js')}</pre>
                 </TabsContent>
               </Tabs>
             </>

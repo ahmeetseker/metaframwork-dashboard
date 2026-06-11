@@ -30,7 +30,7 @@
 }
 
 .dark {
-  --background: oklch(0.12 0 0);
+  --background: oklch(0.12 0.008 235);
   --foreground: oklch(0.95 0.004 230);
   --card: oklch(0.165 0.005 230);
   --card-foreground: oklch(0.95 0.004 230);
@@ -84,11 +84,114 @@
   --radius-lg: calc(var(--radius) + 4px);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --radius-glass: 24px;
+}
+
+/* Liquid glass material tokens (DESIGN.md §4 — design.dev generator: blur 26 / sat 140 / tint #0a0c14) */
+:root {
+  --glass-backdrop: blur(26px) saturate(140%);
+  --glass-tint: radial-gradient(
+    ellipse 130% 90% at 50% 0%,
+    rgb(255 255 255 / 0.72) 0%,
+    rgb(255 255 255 / 0.64) 45%,
+    rgb(255 255 255 / 0.60) 100%
+  );
+  --glass-shadow:
+    0 20px 58px -15px rgb(8 12 24 / 0.16),
+    0 1px 2px rgb(8 12 24 / 0.08),
+    inset 0 1px 1px rgb(255 255 255 / 0.8),
+    inset 0 0 0 1px rgb(255 255 255 / 0.45);
+  --glass-sheen: radial-gradient(ellipse 110% 65% at 50% -15%, rgb(255 255 255 / 0.5) 0%, transparent 70%);
+  --glass-rim:
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.6),
+    inset 0 1px 0 rgb(255 255 255 / 0.8),
+    inset 0 -1px 0 rgb(8 12 24 / 0.06);
+  --glass-fallback: oklch(0.97 0.003 230 / 0.97);
+}
+
+.dark {
+  --glass-tint: radial-gradient(
+    ellipse 130% 90% at 50% 0%,
+    rgb(10 12 20 / 0.63) 0%,
+    rgb(10 12 20 / 0.55) 45%,
+    rgb(10 12 20 / 0.50) 100%
+  );
+  --glass-shadow:
+    0 20px 58px -15px rgb(0 0 0 / 0.31),
+    0 1px 2px rgb(0 0 0 / 0.16),
+    inset 0 0 16px rgb(255 255 255 / 0.04),
+    inset 0 4px 8px -4px rgb(0 0 0 / 0.22),
+    inset 0 -1px 1px rgb(0 0 0 / 0.28),
+    inset 0 1px 1px rgb(255 255 255 / 0.10),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  --glass-sheen: radial-gradient(ellipse 110% 65% at 50% -15%, rgb(255 255 255 / 0.12) 0%, transparent 70%);
+  --glass-rim:
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.07),
+    inset 0 1px 0 rgb(255 255 255 / 0.10),
+    inset 0 -1px 0 rgb(255 255 255 / 0.06);
+  --glass-fallback: oklch(0.17 0.005 230 / 0.95);
 }
 
 @layer base {
   * { @apply border-border; }
   body { @apply bg-background text-foreground font-sans text-sm antialiased; }
+  /* Ambient ground (DESIGN.md §2, Ambient Rule): two static low-chroma glows so glass has light to refract */
+  .dark body {
+    background-image:
+      radial-gradient(ellipse 80% 55% at 50% -10%, oklch(0.26 0.04 250 / 0.5), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 88% 110%, oklch(0.2 0.03 220 / 0.4), transparent 60%);
+    background-attachment: fixed;
+  }
+}
+
+/* Component layer, not utilities: real utilities (fixed/absolute, radius overrides) must be able
+   to beat .glass — in the utilities layer .glass's `position: relative` silently defeated `fixed`
+   on overlay panes (AI dock, Dialog/Sheet content), pulling them into normal flow. */
+@layer components {
+  /* Liquid glass pane (DESIGN.md §4, One-Pane Rule): top-level containers only.
+     Budgets: ≤8 per viewport, never nested, never on repeated items, never animated. */
+  .glass {
+    position: relative;
+    isolation: isolate;
+    border-radius: var(--radius-glass);
+    background: var(--glass-tint);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    backdrop-filter: var(--glass-backdrop);
+    box-shadow: var(--glass-shadow);
+  }
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: var(--glass-sheen);
+    mix-blend-mode: screen;
+    opacity: 0.55;
+  }
+  .glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: var(--glass-rim);
+  }
+  /* Floating tier (Sheet, Dialog, popovers, ⌘K): same pane, heavier drop */
+  .glass-overlay {
+    box-shadow: 0 32px 80px -20px rgb(0 0 0 / 0.45), var(--glass-shadow);
+  }
+  /* Diff Card only (Brass Rule): the single permitted rim modification */
+  .glass-brass {
+    box-shadow: var(--glass-shadow), inset 0 0 0 1px color-mix(in oklab, var(--brass) 35%, transparent);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background: var(--glass-fallback);
+    }
+  }
 }
 
 @layer utilities {
@@ -120,6 +223,15 @@
   .no-anim * {
     animation: none !important;
     transition-duration: 0ms !important;
+  }
+}
+
+/* Reduced transparency: panes fall back to solid surfaces (DESIGN.md §4) */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--glass-fallback);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 

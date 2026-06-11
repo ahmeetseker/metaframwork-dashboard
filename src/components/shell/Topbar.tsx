@@ -13,7 +13,7 @@ export function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
   const setMode = useStore((s) => s.setMode)
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-3 border-b bg-background px-4">
+    <header className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
       <div className="flex items-center gap-2 font-semibold">
         <Hammer className="size-4 text-primary" aria-hidden />
         {t('app.name')}
@@ -29,10 +29,10 @@ export function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
         </SelectContent>
       </Select>
       <button type="button" onClick={onOpenPalette}
-        className="press mx-auto flex h-8 w-full max-w-md items-center gap-2 rounded-md border bg-card px-3 text-sm text-muted-foreground hover:bg-accent">
+        className="press mx-auto flex h-8 w-full max-w-md items-center gap-2 rounded-full bg-foreground/5 px-3.5 font-mono text-sm text-muted-foreground hover:bg-foreground/8">
         <Search className="size-3.5" aria-hidden />
         {t('topbar.search')}
-        <kbd className="ml-auto rounded border bg-muted px-1.5 font-mono text-[10px]">⌘K</kbd>
+        <kbd className="ml-auto rounded border bg-foreground/5 px-1.5 font-mono text-[10px]">⌘K</kbd>
       </button>
       <Button variant="ghost" size="icon" aria-label={t('topbar.toggleTheme')}
         onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}>

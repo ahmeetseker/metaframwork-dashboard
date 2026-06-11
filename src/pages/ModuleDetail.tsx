@@ -58,30 +58,32 @@ export function ModuleDetail() {
         </div>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t('builder.nameLabel')}</TableHead>
-            <TableHead>{t('builder.typeLabel')}</TableHead>
-            <TableHead>{t('builder.required')}</TableHead>
-            <TableHead />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {module.fields.map((f) => (
-            <TableRow key={f.id}>
-              <TableCell className="font-mono text-xs">{f.name}</TableCell>
-              <TableCell><Badge variant="secondary" className="font-mono text-xs">{f.type}</Badge></TableCell>
-              <TableCell className="text-xs">{f.required ? '✓' : ''}</TableCell>
-              <TableCell className="text-right">
-                <Button asChild variant="ghost" size="sm">
-                  <Link to={`/builder/${module.id}?field=${f.id}`}>{t('builder.fieldSettings')}</Link>
-                </Button>
-              </TableCell>
+      <section className="glass p-5">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('builder.nameLabel')}</TableHead>
+              <TableHead>{t('builder.typeLabel')}</TableHead>
+              <TableHead>{t('builder.required')}</TableHead>
+              <TableHead />
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {module.fields.map((f) => (
+              <TableRow key={f.id}>
+                <TableCell className="font-mono text-xs">{f.name}</TableCell>
+                <TableCell><Badge variant="secondary" className="font-mono text-xs">{f.type}</Badge></TableCell>
+                <TableCell className="text-xs">{f.required ? '✓' : ''}</TableCell>
+                <TableCell className="text-right">
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to={`/builder/${module.id}?field=${f.id}`}>{t('builder.fieldSettings')}</Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </section>
     </div>
   )
 }

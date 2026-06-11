@@ -206,7 +206,7 @@ export function DataPage() {
 
       <p className="text-xs text-muted-foreground">{t('data.recordCount', { count: records.length })}</p>
 
-      <div className="rounded-lg border">
+      <div className="glass overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((hg) => (

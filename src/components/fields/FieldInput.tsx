@@ -34,7 +34,7 @@ export function FieldInput({ field, value, onChange, id }: FieldInputProps) {
     case 'select':
       return (
         <Select value={String(value ?? '')} onValueChange={onChange}>
-          <SelectTrigger id={id}><SelectValue /></SelectTrigger>
+          <SelectTrigger id={id} className="w-full font-mono text-xs"><SelectValue /></SelectTrigger>
           <SelectContent>
             {(field.options ?? []).map((o) => (
               <SelectItem key={o} value={o} className="font-mono text-xs">{o}</SelectItem>
@@ -48,7 +48,7 @@ export function FieldInput({ field, value, onChange, id }: FieldInputProps) {
       const labelField = target?.fields.find((f) => f.type === 'text')?.name
       return (
         <Select value={String(value ?? '')} onValueChange={onChange}>
-          <SelectTrigger id={id}><SelectValue /></SelectTrigger>
+          <SelectTrigger id={id} className="w-full"><SelectValue /></SelectTrigger>
           <SelectContent>
             {options.slice(0, 50).map((r) => (
               <SelectItem key={r.id} value={r.id}>

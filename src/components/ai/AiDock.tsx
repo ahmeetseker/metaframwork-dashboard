@@ -75,24 +75,28 @@ export function AiDock() {
 
   if (!open) {
     return (
-      // Motion note: capsule gets `press` utility for pressable feedback
+      // Motion note: `press` lives on the non-glass wrapper button (transform-only effect on the
+      // pane); the inner glass pane carries no transition, keeping it inert per §4 "Never animated"
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t('ai.dockHint')}
-        className="press fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full border border-brass/40 bg-card px-4 py-2 text-sm text-foreground shadow-[0_4px_16px_oklch(0_0_0/0.3)] transition-colors hover:border-brass"
+        className="press fixed bottom-4 left-1/2 z-40 -translate-x-1/2"
       >
-        <Sparkles className="size-4 text-brass" aria-hidden />
-        {t('ai.dockHint')}
+        <span className="glass glass-overlay flex items-center gap-2 px-4 py-2 text-sm text-foreground">
+          <Sparkles className="size-4 text-brass" aria-hidden />
+          {t('ai.dockHint')}
+        </span>
       </button>
     )
   }
 
-  // Motion note: panel is keyboard-summoned (⌘J) → appears INSTANTLY, no transition/animation classes on section
+  // Motion note: panel is keyboard-summoned (⌘J) → appears INSTANTLY, no transition/animation classes on section (Instant Cockpit Rule)
+  // Material note: the expanded dock is the single glass pane; everything inside (incl. DiffCard) is an inset surface
   return (
     <section
       aria-label={t('ai.panelTitle')}
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto flex h-80 w-full max-w-3xl flex-col rounded-t-xl border border-b-0 border-brass/40 bg-card shadow-[0_8px_24px_oklch(0_0_0/0.35)]"
+      className="glass glass-overlay fixed inset-x-4 bottom-4 z-40 mx-auto flex h-80 w-auto max-w-3xl flex-col"
     >
       <header className="flex items-center gap-2 border-b px-4 py-2">
         <Sparkles className="size-4 text-brass" aria-hidden />
@@ -132,7 +136,7 @@ export function AiDock() {
                           <button
                             type="button"
                             onClick={() => void submit(s)}
-                            className="press rounded border bg-background px-2 py-1 font-mono text-xs transition-colors hover:border-brass"
+                            className="press rounded-md border border-border bg-foreground/5 px-2 py-1 font-mono text-xs transition-colors hover:bg-foreground/8"
                           >
                             {s}
                           </button>

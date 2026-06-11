@@ -22,7 +22,7 @@ export function Dashboard() {
     <div className="mx-auto max-w-4xl space-y-8">
       <h1 className="text-2xl font-semibold tracking-tight">{t('dashboard.title')}</h1>
 
-      <dl className="flex gap-8 border-y py-4">
+      <dl className="glass flex items-center gap-8 px-6 py-5">
         {stats.map((s) => (
           <div key={s.label}>
             <dt className="text-xs text-muted-foreground">{s.label}</dt>
@@ -43,7 +43,7 @@ export function Dashboard() {
         </div>
       </dl>
 
-      <section>
+      <section className="glass p-6">
         <h2 className="pb-3 text-base font-semibold">{t('dashboard.recentActivity')}</h2>
         {audit.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t('dashboard.emptyActivity')}</p>

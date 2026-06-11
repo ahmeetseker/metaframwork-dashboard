@@ -22,7 +22,7 @@ Sharp · Technical · Trustworthy. The Linear/Vercel register: dark, precise, ke
 
 - **Bootstrap admin templates** (AdminLTE and kin): widget-cluttered dashboards, identical stat cards, decorative charts nobody reads.
 - **Corporate ERP** (SAP/Oracle style): dense gray form walls, nested menu mazes, 2000s chrome.
-- Additionally avoid the generic AI-SaaS look: purple gradients, glass cards, hero metrics.
+- Additionally avoid the generic AI-SaaS look: purple gradients, hero metrics, and decorative one-off glassmorphism. Forge's liquid-glass material is a committed, budgeted system (DESIGN.md §4), not frosted cards sprinkled for vibes.
 
 ## Design Principles
 

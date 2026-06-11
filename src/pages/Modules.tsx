@@ -64,15 +64,15 @@ export function Modules() {
       </div>
 
       {modules.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
+        <div className="glass p-10 text-center">
           <Boxes className="mx-auto size-8 text-muted-foreground" aria-hidden />
           <h2 className="pt-3 font-semibold">{t('modules.empty')}</h2>
           <p className="mx-auto max-w-md pt-1 text-sm text-muted-foreground">{t('modules.emptyBody')}</p>
         </div>
       ) : (
-        <ul className="divide-y rounded-lg border">
+        <ul className="glass p-2">
           {modules.map((m) => (
-            <li key={m.id} className="flex items-center gap-4 px-4 py-3">
+            <li key={m.id} className="flex items-center gap-4 rounded-lg px-4 py-3 hover:bg-foreground/5">
               <div className="min-w-0">
                 <Link to={`/modules/${m.id}`} className="font-mono text-sm font-medium hover:text-primary">
                   {m.name}

@@ -33,11 +33,13 @@ interface DiffCardProps {
 export function DiffCard({ diff, onAccept, onReject, resolved }: DiffCardProps) {
   return (
     // Motion note: diff cards ARRIVE (system-initiated) → enter-rise utility
-    <div className="enter-rise rounded-lg border border-brass/50 bg-card p-3">
+    // Material note: DiffCard renders inside the AiDock glass pane, so it is an inset surface
+    // (solid fill + 1px brass border) rather than a nested .glass.glass-brass pane (One-Pane Rule)
+    <div className="enter-rise rounded-lg border border-brass/35 bg-foreground/5 p-3">
       <p className="flex items-center gap-1.5 pb-2 text-xs font-medium text-brass">
         <Sparkles className="size-3.5" aria-hidden /> {diff.kind}
       </p>
-      <pre className="overflow-x-auto rounded bg-background p-2 font-mono text-xs leading-relaxed">
+      <pre className="overflow-x-auto rounded-md bg-background p-2 font-mono text-xs leading-relaxed">
         {diffLines(diff).map((line, i) => (
           <div key={`${i}-${line}`} className={line.startsWith('+') ? 'text-success' : 'text-foreground'}>{line}</div>
         ))}
@@ -48,8 +50,8 @@ export function DiffCard({ diff, onAccept, onReject, resolved }: DiffCardProps) 
         </p>
       ) : (
         <div className="flex gap-2 pt-2">
-          <Button size="sm" onClick={onAccept}>{t('ai.accept')}</Button>
-          <Button size="sm" variant="ghost" onClick={onReject}>{t('ai.reject')}</Button>
+          <Button size="sm" className="rounded-full px-3" onClick={onAccept}>{t('ai.accept')}</Button>
+          <Button size="sm" variant="ghost" className="rounded-full px-3" onClick={onReject}>{t('ai.reject')}</Button>
         </div>
       )}
     </div>

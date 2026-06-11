@@ -17,9 +17,9 @@ export function CanvasField({ field, onSelect, selected }: CanvasFieldProps) {
     <div ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        'flex items-center gap-2 rounded-md border bg-card px-3 py-2.5 transition-colors',
+        'flex items-center gap-2 rounded-md border border-border bg-foreground/5 px-3 py-2.5 transition-colors',
         field.layout?.width === 'half' ? 'w-[calc(50%-0.375rem)]' : 'w-full',
-        selected ? 'border-primary' : 'hover:border-foreground/25',
+        selected ? 'border-primary' : 'hover:bg-foreground/8',
         field.hidden && 'opacity-50',
       )}>
       <button type="button" {...attributes} {...listeners}
