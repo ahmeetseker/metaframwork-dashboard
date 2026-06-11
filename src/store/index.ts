@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { arrayMove } from '@dnd-kit/sortable'
 import type {
   Actor, AiDiff, AuditEntry, DataRecord, Field, ModuleDef, Role, TableFilter,
 } from '@/lib/types'
@@ -164,12 +165,11 @@ export const useStore = create<ForgeState>()(
         set((s) => ({
           modules: s.modules.map((m) => {
             if (m.id !== moduleId) return m
-            const fields = [...m.fields]
+            const fields = m.fields
             const from = fields.findIndex((f) => f.id === activeId)
             const to = fields.findIndex((f) => f.id === overId)
             if (from < 0 || to < 0) return m
-            fields.splice(to, 0, ...fields.splice(from, 1))
-            return { ...m, fields, updatedAt: now() }
+            return { ...m, fields: arrayMove(fields, from, to), updatedAt: now() }
           }),
         })),
 

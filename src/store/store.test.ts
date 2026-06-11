@@ -68,4 +68,17 @@ describe('store', () => {
     useStore.getState().setRolePermission('role-viewer', 'mod-tickets', 'update', true)
     expect(useStore.getState().roles.find((r) => r.id === 'role-viewer')!.permissions['mod-tickets'].update).toBe(true)
   })
+
+  it('reorderFields forward-move: moving first field onto third puts it at index 2', () => {
+    // mod-tickets has 9 fields: ti-1 (index 0), ti-2 (index 1), ti-3 (index 2), ...
+    const before = useStore.getState().moduleById('mod-tickets')!.fields
+    const firstId = before[0].id  // ti-1
+    const thirdId = before[2].id  // ti-3
+    useStore.getState().reorderFields('mod-tickets', firstId, thirdId)
+    const after = useStore.getState().moduleById('mod-tickets')!.fields
+    // Result: [ti-2, ti-3, ti-1(moved), ti-4, ...]
+    expect(after[2].id).toBe(firstId)
+    expect(after[0].id).toBe(before[1].id)
+    expect(after[1].id).toBe(before[2].id)
+  })
 })
