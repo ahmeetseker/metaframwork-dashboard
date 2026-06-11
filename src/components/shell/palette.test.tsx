@@ -18,5 +18,9 @@ describe('CommandPalette', () => {
     const dialogContent = document.querySelector('[data-slot="dialog-content"]')
     expect(dialogContent).not.toBeNull()
     expect(dialogContent?.classList.contains('no-anim')).toBe(true)
+    // The DialogOverlay (sibling in the portal) should also have no-anim class
+    const dialogOverlay = document.querySelector('[data-slot="dialog-overlay"]')
+    expect(dialogOverlay).not.toBeNull()
+    expect(dialogOverlay?.classList.contains('no-anim')).toBe(true)
   })
 })

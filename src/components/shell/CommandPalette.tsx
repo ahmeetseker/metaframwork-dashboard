@@ -33,7 +33,7 @@ export function CommandPalette({ open, onOpenChange }: Props) {
   const run = (fn: () => void) => () => { fn(); onOpenChange(false) }
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} className="no-anim">
+    <CommandDialog open={open} onOpenChange={onOpenChange} className="no-anim" overlayClassName="no-anim" aria-label="Command palette">
       <CommandInput placeholder={t('commandPalette.placeholder')} />
       <CommandList>
         <CommandEmpty>{t('commandPalette.noResults')}</CommandEmpty>
