@@ -104,12 +104,12 @@ export function FormBuilder() {
                     <FieldRow key={f.id} field={f} selected={f.id === selectedFieldId}
                       onEdit={() => setSearchParams({ field: f.id })}
                       onDuplicate={() => duplicateField(f)}
-                      onDelete={() => { removeField(module.id, f.id); toast.success(t('builder.fieldDeleted')) }} />
+                      onDelete={() => { removeField(module.id, f.id); if (f.id === selectedFieldId) setSearchParams({}); toast.success(t('builder.fieldDeleted')) }} />
                   ))}
                 </div>
               </SortableContext>
             </DndContext>
-            <Button variant="outline" className="w-full border-dashed" onClick={() => setAdding(true)}>
+            <Button variant="outline" className="w-full border-dashed" onClick={() => { setSearchParams({}); setAdding(true) }}>
               <Plus className="size-4" aria-hidden /> {t('builder.addField')}
             </Button>
           </TabsContent>

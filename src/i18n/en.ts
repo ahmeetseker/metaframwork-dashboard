@@ -42,9 +42,8 @@ export const en = {
   },
   builder: {
     title: 'Form builder', selectModule: 'Select a module',
-    addField: 'Add field', addFieldHint: 'Add field (⌘K)', fieldSettings: 'Field settings',
+    addField: 'Add field', fieldSettings: 'Field settings',
     tabs: { visual: 'Visual', json: 'JSON', preview: 'Preview' },
-    sheetTabs: { general: 'General', validation: 'Validation', conditional: 'Conditional', access: 'Access' },
     labelLabel: 'Label', nameLabel: 'Field name', typeLabel: 'Type',
     required: 'Required', unique: 'Unique', hidden: 'Hidden', halfWidth: 'Half width',
     optionsLabel: 'Options (one per line)', relationLabel: 'Related module',
