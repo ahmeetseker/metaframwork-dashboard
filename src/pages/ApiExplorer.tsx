@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 interface Endpoint { method: 'GET' | 'POST' | 'PATCH' | 'DELETE'; path: string; moduleId: string }
 
 const METHOD_STYLE: Record<Endpoint['method'], string> = {
-  GET: 'text-success', POST: 'text-primary', PATCH: 'text-brass', DELETE: 'text-destructive',
+  GET: 'text-success', POST: 'text-primary', PATCH: 'text-muted-foreground', DELETE: 'text-destructive',
 }
 
 export function ApiExplorer() {
