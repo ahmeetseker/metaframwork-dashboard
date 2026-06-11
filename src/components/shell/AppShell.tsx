@@ -16,6 +16,17 @@ export function AppShell() {
     applyTheme(theme, mode)
   }, [theme, mode])
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setPaletteOpen((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   return (
     <div className="flex h-screen flex-col">
       <Topbar onOpenPalette={() => setPaletteOpen(true)} />
