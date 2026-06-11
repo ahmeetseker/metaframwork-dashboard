@@ -166,6 +166,7 @@ export function AiDock() {
           rows={1}
           value={draft}
           placeholder={t('ai.inputPlaceholder')}
+          aria-label={t('ai.inputPlaceholder')}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

@@ -38,8 +38,8 @@ export function DiffCard({ diff, onAccept, onReject, resolved }: DiffCardProps) 
         <Sparkles className="size-3.5" aria-hidden /> {diff.kind}
       </p>
       <pre className="overflow-x-auto rounded bg-background p-2 font-mono text-xs leading-relaxed">
-        {diffLines(diff).map((line) => (
-          <div key={line} className={line.startsWith('+') ? 'text-success' : 'text-foreground'}>{line}</div>
+        {diffLines(diff).map((line, i) => (
+          <div key={`${i}-${line}`} className={line.startsWith('+') ? 'text-success' : 'text-foreground'}>{line}</div>
         ))}
       </pre>
       {resolved ? (

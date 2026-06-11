@@ -185,7 +185,7 @@ export function DataPage() {
           onChange={(e) => setSearch(e.target.value)} />
         <form className="relative flex-1" onSubmit={(e) => { e.preventDefault(); void askAi() }}>
           <Sparkles className="absolute left-3 top-2.5 size-4 text-brass" aria-hidden />
-          <Input className="pl-9" placeholder={t('data.aiFilter')} value={aiQuery}
+          <Input className="pl-9" placeholder={t('data.aiFilter')} aria-label={t('data.aiFilter')} value={aiQuery}
             onChange={(e) => setAiQuery(e.target.value)} />
         </form>
       </div>
