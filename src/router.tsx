@@ -4,6 +4,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { Modules } from '@/pages/Modules'
 import { ModuleDetail } from '@/pages/ModuleDetail'
 import { FormBuilder } from '@/pages/FormBuilder'
+import { ThemePage } from '@/pages/ThemePage'
 
 const Stub = ({ name }: { name: string }) => (
   <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
@@ -20,7 +21,7 @@ export const router = createBrowserRouter([
       { path: '/modules/:moduleId', element: <ModuleDetail /> },
       { path: '/builder', element: <FormBuilder /> },
       { path: '/builder/:moduleId', element: <FormBuilder /> },
-      { path: '/theme', element: <Stub name="Theme" /> },
+      { path: '/theme', element: <ThemePage /> },
       { path: '/api', element: <Stub name="API explorer" /> },
       { path: '/audit', element: <Stub name="Audit log" /> },
       { path: '/roles', element: <Stub name="Roles" /> },
