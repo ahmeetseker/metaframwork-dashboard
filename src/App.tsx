@@ -1,3 +1,12 @@
+import { RouterProvider } from 'react-router-dom'
+import { Toaster } from '@/components/ui/sonner'
+import { router } from './router'
+
 export function App() {
-  return <main className="p-8 font-sans text-foreground">Forge boot OK</main>
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster position="bottom-right" />
+    </>
+  )
 }

@@ -1,11 +1,13 @@
 import type { CSSProperties } from "react"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+import { useStore } from "@/store"
 
 const Toaster = ({ ...props }: ToasterProps) => {
+  const mode = useStore((s) => s.mode)
   return (
     <Sonner
-      theme="system"
+      theme={mode}
       className="toaster group"
       icons={{
         success: (
