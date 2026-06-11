@@ -94,7 +94,11 @@
 @layer utilities {
   /* Press feedback for every pressable (emil: scale 0.97, 100-160ms, strong ease-out) */
   .press {
-    transition: transform 150ms var(--ease-out);
+    transition:
+      transform 150ms var(--ease-out),
+      color 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease;
   }
   .press:active {
     transform: scale(0.97);
