@@ -56,4 +56,34 @@ describe('FieldModal add flow', () => {
     await userEvent.click(screen.getByRole('button', { name: /back/i }))
     expect(screen.getByText(/pick a field type/i)).toBeInTheDocument()
   })
+
+  it('normalizes trailing underscores from auto-slug on save', async () => {
+    renderModal()
+    await userEvent.click(screen.getByRole('button', { name: /short text/i }))
+    await userEvent.type(screen.getByLabelText(/^label$/i), 'Hello!')
+    // auto-slug produces 'hello_' due to trailing punctuation
+    expect(screen.getByLabelText(/field name/i)).toHaveValue('hello_')
+    await userEvent.click(screen.getByRole('button', { name: /finish/i }))
+    const fields = customers().fields
+    expect(fields.find((f) => f.name === 'hello')).toBeDefined()
+    expect(fields.find((f) => f.name === 'hello_')).toBeUndefined()
+  })
+
+  it('keeps internal underscores when typing field name manually', async () => {
+    renderModal()
+    await userEvent.click(screen.getByRole('button', { name: /short text/i }))
+    const nameInput = screen.getByLabelText(/field name/i)
+    await userEvent.type(nameInput, 'tax_code')
+    expect(nameInput).toHaveValue('tax_code')
+  })
+})
+
+describe('FieldModal relation default', () => {
+  it('does not default relation module to the current module', async () => {
+    renderModal()
+    await userEvent.click(screen.getByRole('button', { name: /link to another module/i }))
+    const trigger = screen.getByRole('combobox')
+    expect(trigger.textContent).not.toContain('customers')
+    expect(trigger.textContent).toContain('orders')
+  })
 })

@@ -24,14 +24,16 @@ import { FIELD_TYPE_META } from './fieldTypeMeta'
 const uid = () => crypto.randomUUID()
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9_]+/g, '_').replace(/^_+/, '')
 
-function makeDraft(type: FieldType, modules: ModuleDef[]): Field {
+function makeDraft(type: FieldType, modules: ModuleDef[], currentModuleId?: string): Field {
   return {
     id: `fld-${uid().slice(0, 8)}`,
     name: '',
     label: '',
     type,
     ...(type === 'select' ? { options: ['option_a', 'option_b'] } : {}),
-    ...(type === 'relation' ? { relation: { module: modules[0]?.name ?? '' } } : {}),
+    ...(type === 'relation'
+      ? { relation: { module: modules.find((m) => m.id !== currentModuleId)?.name ?? '' } }
+      : {}),
   }
 }
 
@@ -62,20 +64,23 @@ export function FieldModal({ module, modules, open, editField, onClose }: FieldM
 
   const save = (): boolean => {
     if (!draft) return false
-    if (!draft.name.trim() || !draft.label.trim()) {
+    const normalizedName = draft.name.replace(/^_+|_+$/g, '')
+    const normalizedDraft = { ...draft, name: normalizedName }
+    if (!normalizedName.trim() || !normalizedDraft.label.trim()) {
       setError(t('builder.modal.nameRequired'))
       return false
     }
-    if (module.fields.some((f) => f.name === draft.name && f.id !== draft.id)) {
-      setError(t('builder.modal.nameTaken', { name: draft.name }))
+    if (module.fields.some((f) => f.name === normalizedName && f.id !== normalizedDraft.id)) {
+      setError(t('builder.modal.nameTaken', { name: normalizedName }))
       return false
     }
+    setDraft(normalizedDraft)
     if (editing) {
-      updateField(module.id, draft.id, draft)
+      updateField(module.id, normalizedDraft.id, normalizedDraft)
       toast.success(t('builder.modal.fieldSaved'))
     } else {
-      addField(module.id, draft)
-      toast.success(t('builder.modal.fieldAdded', { name: draft.name }))
+      addField(module.id, normalizedDraft)
+      toast.success(t('builder.modal.fieldAdded', { name: normalizedName }))
     }
     return true
   }
@@ -129,7 +134,7 @@ export function FieldModal({ module, modules, open, editField, onClose }: FieldM
               const Icon = meta.icon
               return (
                 <button key={type} type="button"
-                  onClick={() => { setDraft(makeDraft(type, modules)); setError(null) }}
+                  onClick={() => { setDraft(makeDraft(type, modules, module.id)); setError(null) }}
                   className="press flex flex-col items-center gap-1.5 rounded-lg border border-border p-3 text-center transition-colors hover:border-ring hover:bg-foreground/5">
                   <span className={cn('flex size-8 items-center justify-center rounded-md', meta.chipClass)}>
                     <Icon className="size-4" aria-hidden />
