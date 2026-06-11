@@ -87,3 +87,21 @@ describe('FieldModal relation default', () => {
     expect(trigger.textContent).toContain('orders')
   })
 })
+
+describe('FieldModal advanced tab', () => {
+  it('saves unique, validation and a conditional rule', async () => {
+    renderModal()
+    await userEvent.click(screen.getByRole('button', { name: /short text/i }))
+    await userEvent.type(screen.getByLabelText(/^label$/i), 'Discount code')
+    await userEvent.click(screen.getByRole('tab', { name: /advanced/i }))
+    await userEvent.click(screen.getByLabelText(/unique/i))
+    await userEvent.type(screen.getByLabelText(/min/i), '3')
+    await userEvent.type(screen.getByLabelText(/max/i), '12')
+    await userEvent.click(screen.getByRole('button', { name: /add rule/i }))
+    await userEvent.click(screen.getByRole('button', { name: /finish/i }))
+    const f = customers().fields.find((x) => x.name === 'discount_code')!
+    expect(f.unique).toBe(true)
+    expect(f.validation).toMatchObject({ min: 3, max: 12 })
+    expect(f.conditional?.rules).toHaveLength(1)
+  })
+})

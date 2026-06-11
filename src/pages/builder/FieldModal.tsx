@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { toast } from 'sonner'
 import { ArrowLeft } from 'lucide-react'
-import type { Field, FieldType, ModuleDef } from '@/lib/types'
+import type { ConditionOperator, ConditionalLogic, Field, FieldType, ModuleDef } from '@/lib/types'
 import { FIELD_TYPES } from '@/lib/types'
 import { t } from '@/i18n/t'
 import { cn } from '@/lib/utils'
@@ -23,6 +23,7 @@ import { FIELD_TYPE_META } from './fieldTypeMeta'
 
 const uid = () => crypto.randomUUID()
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9_]+/g, '_').replace(/^_+/, '')
+const OPERATORS: ConditionOperator[] = ['is', 'is_not', 'contains', 'gt', 'lt']
 
 function makeDraft(type: FieldType, modules: ModuleDef[], currentModuleId?: string): Field {
   return {
@@ -61,6 +62,9 @@ export function FieldModal({ module, modules, open, editField, onClose }: FieldM
   }, [editField, open])
 
   const patch = (p: Partial<Field>) => setDraft((d) => (d ? { ...d, ...p } : d))
+
+  const cond: ConditionalLogic = draft?.conditional ?? { action: 'show', logic: 'and', rules: [] }
+  const patchCond = (p: Partial<ConditionalLogic>) => patch({ conditional: { ...cond, ...p } })
 
   const save = (): boolean => {
     if (!draft) return false
@@ -206,7 +210,86 @@ export function FieldModal({ module, modules, open, editField, onClose }: FieldM
               </TabsContent>
 
               <TabsContent value="advanced" className="space-y-4 pt-4">
-                {/* Task 5 fills this in */}
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="fm-unique">{t('builder.unique')}</Label>
+                  <Switch id="fm-unique" checked={Boolean(draft.unique)} onCheckedChange={(v) => patch({ unique: v })} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="fm-hidden">{t('builder.hidden')}</Label>
+                  <Switch id="fm-hidden" checked={Boolean(draft.hidden)} onCheckedChange={(v) => patch({ hidden: v })} />
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-1 space-y-1.5">
+                    <Label htmlFor="fm-min">{t('builder.minLabel')}</Label>
+                    <Input id="fm-min" type="number" value={draft.validation?.min ?? ''}
+                      onChange={(e) => patch({ validation: { ...draft.validation, min: e.target.value === '' ? undefined : Number(e.target.value) } })} />
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <Label htmlFor="fm-max">{t('builder.maxLabel')}</Label>
+                    <Input id="fm-max" type="number" value={draft.validation?.max ?? ''}
+                      onChange={(e) => patch({ validation: { ...draft.validation, max: e.target.value === '' ? undefined : Number(e.target.value) } })} />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="fm-pattern">{t('builder.patternLabel')}</Label>
+                  <Input id="fm-pattern" className="font-mono" value={draft.validation?.pattern ?? ''}
+                    onChange={(e) => patch({ validation: { ...draft.validation, pattern: e.target.value || undefined } })} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="fm-msg">{t('builder.messageLabel')}</Label>
+                  <Input id="fm-msg" value={draft.validation?.message ?? ''}
+                    onChange={(e) => patch({ validation: { ...draft.validation, message: e.target.value || undefined } })} />
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-1 space-y-1.5">
+                    <Label>{t('builder.conditionalAction')}</Label>
+                    <Select value={cond.action} onValueChange={(v) => patchCond({ action: v as ConditionalLogic['action'] })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="show">{t('builder.show')}</SelectItem>
+                        <SelectItem value="hide">{t('builder.hide')}</SelectItem>
+                        <SelectItem value="require">{t('builder.require')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <Label>{t('builder.conditionalLogic')}</Label>
+                    <Select value={cond.logic} onValueChange={(v) => patchCond({ logic: v as 'and' | 'or' })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="and">{t('builder.and')}</SelectItem>
+                        <SelectItem value="or">{t('builder.or')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                {cond.rules.map((rule, i) => (
+                  <div key={i} className="flex items-end gap-2">
+                    <Select value={rule.field}
+                      onValueChange={(v) => patchCond({ rules: cond.rules.map((r, j) => (j === i ? { ...r, field: v } : r)) })}>
+                      <SelectTrigger className="flex-1 font-mono text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {module.fields.filter((f) => f.id !== draft.id).map((f) => (
+                          <SelectItem key={f.id} value={f.name} className="font-mono text-xs">{f.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={rule.operator}
+                      onValueChange={(v) => patchCond({ rules: cond.rules.map((r, j) => (j === i ? { ...r, operator: v as ConditionOperator } : r)) })}>
+                      <SelectTrigger className="w-24 font-mono text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {OPERATORS.map((op) => <SelectItem key={op} value={op} className="font-mono text-xs">{op}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Input className="flex-1 font-mono text-xs" value={String(rule.value ?? '')}
+                      onChange={(e) => patchCond({ rules: cond.rules.map((r, j) => (j === i ? { ...r, value: e.target.value } : r)) })} />
+                  </div>
+                ))}
+                <Button variant="outline" size="sm"
+                  onClick={() => patchCond({ rules: [...cond.rules, { field: module.fields[0]?.name ?? '', operator: 'is', value: '' }] })}>
+                  {t('builder.addRule')}
+                </Button>
+                <p className="text-xs text-muted-foreground">{t('builder.accessNote')}</p>
               </TabsContent>
             </Tabs>
 
