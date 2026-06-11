@@ -105,3 +105,37 @@ describe('FieldModal advanced tab', () => {
     expect(f.conditional?.rules).toHaveLength(1)
   })
 })
+
+describe('FieldModal edit mode', () => {
+  it('opens at configure step with values, saves a patch', async () => {
+    const target = customers().fields.find((f) => f.name === 'phone')!
+    const { onClose } = renderModal({ editField: target })
+    // no type grid in edit mode
+    expect(screen.queryByText(/pick a field type/i)).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/^label$/i)).toHaveValue('Phone')
+    await userEvent.clear(screen.getByLabelText(/^label$/i))
+    await userEvent.type(screen.getByLabelText(/^label$/i), 'Phone number')
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }))
+    expect(customers().fields.find((f) => f.id === target.id)?.label).toBe('Phone number')
+    expect(onClose).toHaveBeenCalled()
+  })
+
+  it('edit mode has no "save & add another" and no back button', () => {
+    const target = customers().fields.find((f) => f.name === 'phone')!
+    renderModal({ editField: target })
+    expect(screen.queryByRole('button', { name: /add another/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /back/i })).not.toBeInTheDocument()
+  })
+})
+
+describe('FieldModal save & add another', () => {
+  it('persists the field and returns to the type grid', async () => {
+    const { onClose } = renderModal()
+    await userEvent.click(screen.getByRole('button', { name: /short text/i }))
+    await userEvent.type(screen.getByLabelText(/^label$/i), 'Nickname')
+    await userEvent.click(screen.getByRole('button', { name: /add another/i }))
+    expect(customers().fields.some((f) => f.name === 'nickname')).toBe(true)
+    expect(onClose).not.toHaveBeenCalled()
+    expect(screen.getByText(/pick a field type/i)).toBeInTheDocument()
+  })
+})
