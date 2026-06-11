@@ -7,6 +7,9 @@ import { t } from '@/i18n/t'
 import { useStore } from '@/store'
 import { DiffCard } from '@/components/ai/DiffCard'
 
+const CHIP_CLASS =
+  'press rounded-md border border-border bg-foreground/5 px-2 py-1 font-mono text-xs transition-colors hover:bg-foreground/8'
+
 interface Exchange {
   prompt: string
   response?: AiResponse
@@ -38,18 +41,13 @@ export function AiBar({ module }: { module: ModuleDef }) {
   }
 
   const resolve = (verdict: 'accepted' | 'rejected') => {
-    setExchange((ex) => {
-      if (!ex?.response) return ex
-      if (verdict === 'accepted' && ex.response.diff) {
-        applyDiff(ex.response.diff)
-        toast.success(t('ai.applied'))
-      }
-      return { ...ex, resolved: verdict }
-    })
+    if (!exchange?.response) return
+    if (verdict === 'accepted' && exchange.response.diff) {
+      applyDiff(exchange.response.diff)
+      toast.success(t('ai.applied'))
+    }
+    setExchange({ ...exchange, resolved: verdict })
   }
-
-  const chip =
-    'press rounded-md border border-border bg-foreground/5 px-2 py-1 font-mono text-xs transition-colors hover:bg-foreground/8'
 
   return (
     <div className="space-y-2">
@@ -71,7 +69,7 @@ export function AiBar({ module }: { module: ModuleDef }) {
       {!exchange && (
         <div className="flex flex-wrap gap-1.5">
           {SUGGESTIONS.slice(0, 3).map((s) => (
-            <button key={s} type="button" onClick={() => void submit(s)} className={chip}>{s}</button>
+            <button key={s} type="button" onClick={() => void submit(s)} className={CHIP_CLASS}>{s}</button>
           ))}
         </div>
       )}
@@ -87,7 +85,7 @@ export function AiBar({ module }: { module: ModuleDef }) {
                 <ul className="flex flex-wrap gap-1.5">
                   {exchange.response.suggestions.map((s) => (
                     <li key={s}>
-                      <button type="button" onClick={() => void submit(s)} className={chip}>{s}</button>
+                      <button type="button" onClick={() => void submit(s)} className={CHIP_CLASS}>{s}</button>
                     </li>
                   ))}
                 </ul>
