@@ -7,6 +7,7 @@ import { FormBuilder } from '@/pages/FormBuilder'
 import { ThemePage } from '@/pages/ThemePage'
 import { DataPage } from '@/pages/DataPage'
 import { ApiExplorer } from '@/pages/ApiExplorer'
+import { AuditLog } from '@/pages/AuditLog'
 
 const Stub = ({ name }: { name: string }) => (
   <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
@@ -25,7 +26,7 @@ export const router = createBrowserRouter([
       { path: '/builder/:moduleId', element: <FormBuilder /> },
       { path: '/theme', element: <ThemePage /> },
       { path: '/api', element: <ApiExplorer /> },
-      { path: '/audit', element: <Stub name="Audit log" /> },
+      { path: '/audit', element: <AuditLog /> },
       { path: '/roles', element: <Stub name="Roles" /> },
     ],
   },
