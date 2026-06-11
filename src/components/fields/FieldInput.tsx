@@ -25,7 +25,7 @@ export function FieldInput({ field, value, onChange, id }: FieldInputProps) {
     case 'number':
       return (
         <Input id={id} type="number" inputMode="decimal" value={String(value ?? '')}
-          onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))} />
+          onChange={(e) => onChange(e.target.value === '' ? undefined : Number(e.target.value))} />
       )
     case 'boolean':
       return <Switch id={id} checked={Boolean(value)} onCheckedChange={onChange} />

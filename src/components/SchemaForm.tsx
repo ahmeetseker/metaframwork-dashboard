@@ -50,7 +50,15 @@ export function SchemaForm({ module, initialValues = {}, onSubmit, submitLabel }
             {(field.required || cond.required) && <span className="text-destructive"> *</span>}
           </Label>
           <FieldInput id={`sf-${field.id}`} field={field} value={values[field.name]}
-            onChange={(v) => setValues((s) => ({ ...s, [field.name]: v }))} />
+            onChange={(v) => {
+              setValues((s) => ({ ...s, [field.name]: v }))
+              setErrors((e) => {
+                if (!(field.name in e)) return e
+                const errorsCopy = { ...e }
+                delete errorsCopy[field.name]
+                return errorsCopy
+              })
+            }} />
           {errors[field.name] && (
             <p role="alert" className="text-xs text-destructive">{errors[field.name]}</p>
           )}
