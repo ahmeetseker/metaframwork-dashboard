@@ -57,6 +57,7 @@ export const en = {
     jsonApplied: 'Schema updated from JSON',
     previewNote: 'Live preview — validation and conditional logic are real.',
     emptyCanvas: 'No fields yet. Add one below or ask the AI.',
+    applyJson: 'Apply schema',
   },
   theme: {
     title: 'Theme & branding', promptPlaceholder: '"dark green, corporate but warm" — describe your brand',
@@ -78,6 +79,7 @@ export const en = {
     title: 'API explorer', send: 'Send request', response: 'Response', snippet: 'Code',
     note: 'Simulated endpoints derived from your schema. Responses come from local data.',
     params: 'Params', body: 'Body', headers: 'Headers',
+    curlLabel: 'curl', jsLabel: 'fetch',
   },
   audit: {
     title: 'Audit log', actor: 'Actor', action: 'Action', target: 'Target', when: 'When',

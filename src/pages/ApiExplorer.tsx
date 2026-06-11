@@ -90,8 +90,8 @@ export function ApiExplorer() {
               <Tabs defaultValue="response">
                 <TabsList>
                   <TabsTrigger value="response">{t('api.response')}</TabsTrigger>
-                  <TabsTrigger value="curl">curl</TabsTrigger>
-                  <TabsTrigger value="js">fetch</TabsTrigger>
+                  <TabsTrigger value="curl">{t('api.curlLabel')}</TabsTrigger>
+                  <TabsTrigger value="js">{t('api.jsLabel')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="response">
                   <pre className="enter-rise h-[380px] overflow-auto rounded-lg border bg-card p-3 font-mono text-xs leading-relaxed">

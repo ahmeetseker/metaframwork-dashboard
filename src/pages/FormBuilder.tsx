@@ -132,7 +132,7 @@ export function FormBuilder() {
             value={jsonDraft ?? schemaJson}
             onChange={(e) => setJsonDraft(e.target.value)} />
           {jsonError && <p role="alert" className="font-mono text-xs text-destructive">{jsonError}</p>}
-          <Button onClick={applyJson}>Apply</Button>
+          <Button onClick={applyJson}>{t('builder.applyJson')}</Button>
         </TabsContent>
 
         <TabsContent value="preview" className="pt-4">
