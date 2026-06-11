@@ -8,10 +8,7 @@ import { ThemePage } from '@/pages/ThemePage'
 import { DataPage } from '@/pages/DataPage'
 import { ApiExplorer } from '@/pages/ApiExplorer'
 import { AuditLog } from '@/pages/AuditLog'
-
-const Stub = ({ name }: { name: string }) => (
-  <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
-)
+import { Roles } from '@/pages/Roles'
 
 export const router = createBrowserRouter([
   {
@@ -27,7 +24,7 @@ export const router = createBrowserRouter([
       { path: '/theme', element: <ThemePage /> },
       { path: '/api', element: <ApiExplorer /> },
       { path: '/audit', element: <AuditLog /> },
-      { path: '/roles', element: <Stub name="Roles" /> },
+      { path: '/roles', element: <Roles /> },
     ],
   },
 ])
