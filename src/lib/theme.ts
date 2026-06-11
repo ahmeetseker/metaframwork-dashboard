@@ -30,6 +30,8 @@ export function applyTheme(theme: ThemeTokens, mode: ThemeMode): void {
   const root = document.documentElement
   root.classList.toggle('dark', mode === 'dark')
   // Clear previous inline overrides so removed tokens fall back to the stylesheet.
+  // Note: this clears ALL inline --* vars on :root, including any set by third-party
+  // libraries. Acceptable for prototype scope where we own the full token surface.
   for (const prop of Array.from(root.style)) {
     if (prop.startsWith('--')) root.style.removeProperty(prop)
   }
@@ -38,7 +40,7 @@ export function applyTheme(theme: ThemeTokens, mode: ThemeMode): void {
     root.style.setProperty(key, value)
   }
   root.style.setProperty('--radius', theme.radius)
-  root.style.setProperty('--font-sans', theme.fontSans)
+  root.style.setProperty('--font-sans-runtime', theme.fontSans)
 }
 
 /** Serializes a theme to a paste-ready CSS block (Theme page "Copy CSS"). */
