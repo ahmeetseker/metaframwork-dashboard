@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { AppShell } from '@/components/shell/AppShell'
+import { Dashboard } from '@/pages/Dashboard'
 
 const Stub = ({ name }: { name: string }) => (
   <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
@@ -9,7 +10,7 @@ export const router = createBrowserRouter([
   {
     element: <AppShell />,
     children: [
-      { path: '/', element: <Stub name="Dashboard" /> },
+      { path: '/', element: <Dashboard /> },
       { path: '/data', element: <Stub name="Data" /> },
       { path: '/data/:moduleId', element: <Stub name="Data" /> },
       { path: '/modules', element: <Stub name="Modules" /> },
