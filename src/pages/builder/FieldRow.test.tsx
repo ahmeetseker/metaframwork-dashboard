@@ -55,4 +55,15 @@ describe('FieldRow', () => {
     await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
     expect(props.onDelete).toHaveBeenCalled()
   })
+
+  it('clicking the row body (field name button) fires onEdit', async () => {
+    const props = renderRow()
+    await userEvent.click(screen.getByText('customer_type'))
+    expect(props.onEdit).toHaveBeenCalled()
+  })
+
+  it('renders hidden badge when hidden: true', () => {
+    renderRow({ field: { ...field, hidden: true } })
+    expect(screen.getByText(/hidden/i)).toBeInTheDocument()
+  })
 })
