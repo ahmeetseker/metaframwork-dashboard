@@ -79,7 +79,7 @@ This system explicitly rejects the cluttered Bootstrap-admin look (widget walls,
 - One working color (cobalt) for user action, one reserved color (brass) for AI
 - Single sans (Inter) with a hard-working mono (JetBrains Mono) for everything schema-shaped
 - Fixed rem scale, tight 1.15–1.25 ratio; density carried by hierarchy, not cramming
-- Motion is Restrained: 150–250ms state changes only, no choreography
+- Motion is Restrained and engineered to Emil Kowalski's design-engineering doctrine: custom ease-out curves, sub-300ms durations, zero animation on keyboard-triggered surfaces
 
 ## 2. Colors
 
@@ -153,7 +153,21 @@ Component tokens are seeded here as doctrine; exact values land in the frontmatt
 - Left sidebar on surface tone, grouped labels, active item carries a cobalt text+icon treatment with a tonal pill — no side-stripe borders. Top bar: ground tone, hairline bottom border, ⌘K trigger styled as a mono input ghost.
 
 ### Diff Card (signature component)
-The AI's voice. Brass hairline border, brass icon, mono diff body (+/- lines tinted success/destructive), summary line in Inter, and an Accept / Reject button pair. Every AI mutation in the product flows through this one component — it must be instantly recognizable.
+The AI's voice. Brass hairline border, brass icon, mono diff body (+/- lines tinted success/destructive), summary line in Inter, and an Accept / Reject button pair. Every AI mutation in the product flows through this one component — it must be instantly recognizable. Enters with `@starting-style` fade + 8px rise (250ms, ease-out); never from `scale(0)`.
+
+### Motion (doctrine: Emil Kowalski / emil-design-eng)
+Motion tokens are normative; every transition in the panel uses them.
+
+- **Easing:** `--ease-out: cubic-bezier(0.23, 1, 0.32, 1)` (entries, exits, press feedback) · `--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)` (on-screen movement) · `ease` only for hover color shifts · `linear` only for constant motion. `ease-in` is forbidden on UI.
+- **Durations:** press feedback 100–160ms · tooltips/popovers 125–200ms · dropdowns/selects 150–250ms · Sheets/dialogs/AI dock 200–300ms. Nothing on UI exceeds 300ms.
+- **Frequency rule:** keyboard-triggered, high-frequency surfaces animate **never** — the ⌘K command palette and ⌘J dock toggle open instantly (Raycast model). Occasional surfaces (Sheet, Dialog, toast, diff card) get standard animation.
+- **Press feedback:** every pressable element gets `transform: scale(0.97)` on `:active` with `transition: transform 160ms var(--ease-out)`.
+- **Entries:** never from `scale(0)`; start at `scale(0.95–0.97)` + `opacity: 0`, prefer `@starting-style`. Popovers/dropdowns are origin-aware (`transform-origin: var(--radix-popover-content-transform-origin)`); modals stay center-origin.
+- **Exits faster than entries.** Transitions over keyframes for anything rapidly re-triggered (toasts, diff cards).
+- **Performance:** animate only `transform` and `opacity`; hover effects gated behind `@media (hover: hover) and (pointer: fine)`.
+- **Reduced motion:** `prefers-reduced-motion` keeps opacity fades, drops translate/scale movement — gentler, not zero.
+
+**The Instant Cockpit Rule.** Anything the developer triggers from the keyboard responds in 0ms. Animation is reserved for things that arrive — sheets, toasts, AI proposals — never for things the developer summons.
 
 ## 6. Do's and Don'ts
 

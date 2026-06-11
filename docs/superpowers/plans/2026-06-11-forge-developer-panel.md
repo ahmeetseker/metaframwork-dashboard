@@ -52,6 +52,15 @@ src/
 
 Conventions: named exports; UI strings only via `t()`; schema-known strings (field names, types, endpoints, JSON) rendered with `font-mono` (DESIGN.md "Machinery Rule"); brass color only on AI-origin elements ("Brass Rule").
 
+**Motion doctrine (binding for every UI task; source: DESIGN.md "Motion" + emil-design-eng):**
+- Easing only via tokens: `--ease-out: cubic-bezier(0.23,1,0.32,1)` for enter/exit/press, `--ease-in-out: cubic-bezier(0.77,0,0.175,1)` for on-screen movement. Never `ease-in`, never `transition: all`.
+- Durations: press 100–160ms, popovers 125–200ms, dropdowns 150–250ms, Sheet/Dialog/dock 200–300ms. Hard ceiling 300ms.
+- **⌘K palette and ⌘J dock toggle animate NEVER** (keyboard-triggered, high frequency — Raycast model). shadcn's default dialog zoom animation must be disabled for the CommandDialog.
+- Every pressable: `active:scale-[0.97]` with `transition-transform duration-150` (the `.press` utility from Task 2).
+- Entries start at `scale(0.95+)` + `opacity:0`, never `scale(0)`; toasts/diff cards use transitions (not keyframes); exits faster than entries.
+- Animate only `transform`/`opacity`; hover-only effects behind `@media (hover: hover)`.
+- Reduced motion: keep opacity fades, drop movement (see the `@media` block in Task 2 — it zeroes transform-based motion but leaves opacity transitions at 150ms).
+
 ---
 
 ### Task 1: Project scaffold (Vite + Tailwind v4 + shadcn + Vitest)
@@ -350,6 +359,8 @@ Token values come from `DESIGN.md` frontmatter (normative). `applyTheme` is the 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 @layer base {
@@ -357,13 +368,45 @@ Token values come from `DESIGN.md` frontmatter (normative). `applyTheme` is the 
   body { @apply bg-background text-foreground font-sans text-sm antialiased; }
 }
 
+@layer utilities {
+  /* Press feedback for every pressable (emil: scale 0.97, 100-160ms, strong ease-out) */
+  .press {
+    transition: transform 150ms var(--ease-out);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+  /* Entry for arriving surfaces (diff cards, toasts): fade + 8px rise, never scale(0) */
+  .enter-rise {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 250ms var(--ease-out),
+      transform 250ms var(--ease-out);
+    @starting-style {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  /* Keyboard-summoned surfaces must not animate (Instant Cockpit Rule) */
+  .no-anim,
+  .no-anim * {
+    animation: none !important;
+    transition-duration: 0ms !important;
+  }
+}
+
+/* Reduced motion: keep opacity fades, drop movement (emil: gentler, not zero) */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    transition-property: opacity, color, background-color, border-color !important;
+    transition-duration: 150ms !important;
   }
 }
 ```
+
+Apply the `press` utility to the shadcn `Button` base (in `src/components/ui/button.tsx`, append `press` to the `cva` base class string after running shadcn add in Task 1 — do it in this task since the file exists by now).
 
 - [ ] **Step 2: Write the failing test for `applyTheme`** — `src/lib/theme.test.ts`
 
@@ -2410,6 +2453,8 @@ export function CommandPalette({ open, onOpenChange }: Props) {
 }
 ```
 
+**Motion note (Instant Cockpit Rule):** the palette is keyboard-summoned and high-frequency — it must open with **zero animation**. Pass `className="no-anim"` to `CommandDialog`'s content (shadcn's `CommandDialog` accepts `className`; if the version in the repo doesn't forward it, add `overlayClassName`/`className` passthrough or strip the `data-[state=open]:animate-*` classes inside `src/components/ui/dialog.tsx` for this dialog only via the `no-anim` utility).
+
 - [ ] **Step 4: Add the global ⌘K shortcut to `AppShell.tsx`** — add inside the component, after the existing `useEffect`:
 
 ```tsx
@@ -2437,6 +2482,8 @@ git commit -m "feat: command palette with pages, modules and actions"
 ---
 
 ### Task 11: AI Dock + DiffCard (the brass surface)
+
+**Motion notes (emil-design-eng):** ⌘J toggle is keyboard-summoned → the expanded panel appears **instantly** (no slide animation on toggle). The collapsed capsule gets the `press` utility. Diff cards and AI message bubbles *arrive* (system-initiated) → wrap each in the `enter-rise` utility (fade + 8px rise, 250ms `--ease-out`, `@starting-style`). Suggestion chips get `press`. No other animation.
 
 **Files:**
 - Create: `src/components/ai/DiffCard.tsx`
