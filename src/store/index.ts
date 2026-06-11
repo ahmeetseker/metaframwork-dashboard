@@ -49,6 +49,32 @@ const entry = (actor: Actor, action: string, target: string, payload?: unknown):
   id: uid(), timestamp: now(), actor, action, target, payload,
 })
 
+/** Coalesce rapid successive field.update audit entries.
+ *  If the most recent audit entry is a field.update for the same target and actor
+ *  and is younger than windowMs, replace it (merging payload) instead of prepending. */
+function coalesceAudit(
+  audit: AuditEntry[],
+  newEntry: AuditEntry,
+  windowMs = 3000,
+): AuditEntry[] {
+  const prev = audit[0]
+  if (
+    prev &&
+    prev.action === 'field.update' &&
+    newEntry.action === 'field.update' &&
+    prev.target === newEntry.target &&
+    prev.actor === newEntry.actor &&
+    Date.now() - new Date(prev.timestamp).getTime() < windowMs
+  ) {
+    const merged: AuditEntry = {
+      ...prev,
+      payload: { ...(prev.payload as object), ...(newEntry.payload as object) },
+    }
+    return [merged, ...audit.slice(1)]
+  }
+  return [newEntry, ...audit]
+}
+
 const seedState = () => ({
   modules: structuredClone(seedModules),
   records: makeSeedRecords(),
@@ -139,13 +165,30 @@ export const useStore = create<ForgeState>()(
         set((s) => {
           const mod = s.modules.find((m) => m.id === moduleId)
           const field = mod?.fields.find((f) => f.id === fieldId)
+          const oldName = field?.name
+          const newName = patch.name
+          const renaming = newName !== undefined && newName !== oldName
+
+          const modules = s.modules.map((m) => {
+            if (m.id !== moduleId) return m
+            const updatedFields = m.fields.map((f) => {
+              if (f.id === fieldId) return { ...f, ...patch }
+              // When renaming, rewrite conditional rules in sibling fields that reference oldName
+              if (renaming && f.conditional) {
+                const rewrittenRules = f.conditional.rules.map((rule) =>
+                  rule.field === oldName ? { ...rule, field: newName! } : rule,
+                )
+                return { ...f, conditional: { ...f.conditional, rules: rewrittenRules } }
+              }
+              return f
+            })
+            return { ...m, updatedAt: now(), fields: updatedFields }
+          })
+
+          const newEntry = entry(actor, 'field.update', `${mod?.name}.${oldName}`, patch)
           return {
-            modules: s.modules.map((m) =>
-              m.id === moduleId
-                ? { ...m, updatedAt: now(), fields: m.fields.map((f) => (f.id === fieldId ? { ...f, ...patch } : f)) }
-                : m,
-            ),
-            audit: [entry(actor, 'field.update', `${mod?.name}.${field?.name}`, patch), ...s.audit],
+            modules,
+            audit: coalesceAudit(s.audit, newEntry),
           }
         }),
 

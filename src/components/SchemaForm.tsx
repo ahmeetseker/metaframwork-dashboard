@@ -47,7 +47,7 @@ export function SchemaForm({ module, initialValues = {}, onSubmit, submitLabel }
           className={cn('space-y-1.5', field.layout?.width === 'half' ? 'w-[calc(50%-0.5rem)]' : 'w-full')}>
           <Label htmlFor={`sf-${field.id}`} className="text-xs font-medium">
             {field.label}
-            {(field.required || cond.required) && <span className="text-destructive"> *</span>}
+            {(field.required || cond.required) && <span className="text-destructive" aria-label="required"> *</span>}
           </Label>
           <FieldInput id={`sf-${field.id}`} field={field} value={values[field.name]}
             onChange={(v) => {

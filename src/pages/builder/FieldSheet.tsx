@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
@@ -37,6 +37,7 @@ export function FieldSheet({ module, field, onClose }: FieldSheetProps) {
       <SheetContent className="w-[380px] overflow-y-auto sm:max-w-[380px]">
         <SheetHeader>
           <SheetTitle className="font-mono text-base">{field.name}</SheetTitle>
+          <SheetDescription className="sr-only">Field settings</SheetDescription>
         </SheetHeader>
         <Tabs defaultValue="general" className="px-4 pb-6">
           <TabsList className="w-full">

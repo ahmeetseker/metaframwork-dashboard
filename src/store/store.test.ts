@@ -81,4 +81,38 @@ describe('store', () => {
     expect(after[0].id).toBe(before[1].id)
     expect(after[1].id).toBe(before[2].id)
   })
+
+  it('two rapid updateField calls to same field produce ONE coalesced audit entry with merged payload', () => {
+    const st = useStore.getState()
+    const auditBefore = st.audit.length
+    st.updateField('mod-tickets', 'ti-1', { label: 'Title A' })
+    st.updateField('mod-tickets', 'ti-1', { label: 'Title B' })
+    const s = useStore.getState()
+    // Both calls happened within ms — should be coalesced into one entry
+    const newEntries = s.audit.length - auditBefore
+    expect(newEntries).toBe(1)
+    // The merged payload should contain both patches (last label wins, but both keys present)
+    expect(s.audit[0]).toMatchObject({ action: 'field.update', target: 'tickets.title' })
+    expect((s.audit[0].payload as Record<string, unknown>).label).toBe('Title B')
+  })
+
+  it('updateField on a different field after same-field calls produces a separate audit entry', () => {
+    const st = useStore.getState()
+    st.updateField('mod-tickets', 'ti-1', { label: 'Title A' })
+    st.updateField('mod-tickets', 'ti-1', { label: 'Title B' })
+    const auditAfterSame = useStore.getState().audit.length
+    st.updateField('mod-tickets', 'ti-2', { label: 'Desc' })
+    const s = useStore.getState()
+    expect(s.audit.length).toBe(auditAfterSame + 1)
+    expect(s.audit[0]).toMatchObject({ action: 'field.update', target: 'tickets.description' })
+  })
+
+  it('renaming a field migrates conditional rules in sibling fields', () => {
+    // customers: field 'type' (cu-5) is referenced in tax_no's (cu-6) conditional rule
+    const st = useStore.getState()
+    st.updateField('mod-customers', 'cu-5', { name: 'kind' })
+    const customers = useStore.getState().moduleById('mod-customers')!
+    const taxNo = customers.fields.find((f) => f.id === 'cu-6')!
+    expect(taxNo.conditional!.rules[0].field).toBe('kind')
+  })
 })

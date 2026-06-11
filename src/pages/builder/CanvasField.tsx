@@ -29,7 +29,7 @@ export function CanvasField({ field, onSelect, selected }: CanvasFieldProps) {
       <button type="button" onClick={onSelect} className="flex min-w-0 flex-1 items-center gap-2 text-left">
         <span className="truncate font-mono text-xs font-medium">{field.name}</span>
         <Badge variant="secondary" className="font-mono text-[10px]">{field.type}</Badge>
-        {field.required && <span className="text-xs text-destructive">*</span>}
+        {field.required && <span className="text-xs text-destructive" aria-label="required">*</span>}
         <span className="ml-auto truncate text-xs text-muted-foreground">{field.label}</span>
       </button>
     </div>
