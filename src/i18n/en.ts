@@ -58,6 +58,31 @@ export const en = {
     previewNote: 'Live preview — validation and conditional logic are real.',
     emptyCanvas: 'No fields yet. Add one below or ask the AI.',
     applyJson: 'Apply schema',
+    typeDesc: {
+      text: 'Short text — names & titles', textarea: 'Long prose — notes & descriptions',
+      number: 'Integers & decimals', select: 'Pick from a list of options',
+      relation: 'Link to another module', date: 'Date picker', boolean: 'On / off switch',
+      json: 'Raw structured data', email: 'Validated e-mail address', url: 'Validated link',
+    },
+    modal: {
+      addTitle: 'Add field to {module}', editTitle: 'Edit {name}', pickType: 'Pick a field type',
+      back: 'Back', finish: 'Finish', saveAddAnother: 'Save & add another', save: 'Save',
+      tabs: { basic: 'Basic', advanced: 'Advanced' },
+      nameRequired: 'Label and field name are required.',
+      nameTaken: 'A field named "{name}" already exists.',
+      fieldAdded: 'Field {name} added', fieldSaved: 'Field saved',
+    },
+    row: {
+      reorder: 'Reorder {name}', edit: 'Edit {name}', duplicate: 'Duplicate {name}', delete: 'Delete {name}',
+      conditional: 'conditional',
+      deleteTitle: 'Delete {name}?',
+      deleteBody: 'This removes the field from the form. Existing record values stay untouched.',
+      duplicated: 'Field duplicated as {name}',
+    },
+    aiBar: {
+      placeholder: 'Describe fields to add… e.g. "add a priority select field"',
+      label: 'AI quick create',
+    },
   },
   theme: {
     title: 'Theme & branding', promptPlaceholder: '"dark green, corporate but warm" — describe your brand',
