@@ -1,18 +1,18 @@
 import type { Field } from './types'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const URL_RE = /^https?:\/\/\S+\.\S+/
+const URL_RE = /^https?:\/\/\S+\.\S+$/
 
 const isEmpty = (v: unknown) => v === undefined || v === null || v === ''
 
 export interface ValidateOptions {
-  /** Set by conditional logic ('require' action). */
+  /** Set by conditional logic ('require' action). Can only add a requirement, never remove field.required. */
   requiredOverride?: boolean
 }
 
 /** Returns a human error message, or null when valid. */
 export function validateValue(field: Field, value: unknown, opts: ValidateOptions = {}): string | null {
-  const required = opts.requiredOverride ?? field.required ?? false
+  const required = (opts.requiredOverride ?? false) || (field.required ?? false)
   if (isEmpty(value)) return required ? `${field.label} is required` : null
 
   const v = field.validation

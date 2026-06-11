@@ -45,4 +45,10 @@ describe('validateValue', () => {
   it('requiredOverride forces required (conditional logic hook)', () => {
     expect(validateValue(base, '', { requiredOverride: true })).toMatch(/required/i)
   })
+  it('requiredOverride false does not silence field.required', () => {
+    expect(validateValue({ ...base, required: true }, '', { requiredOverride: false })).toMatch(/required/i)
+  })
+  it('url rejects trailing garbage', () => {
+    expect(validateValue({ ...base, type: 'url' }, 'https://a.b not-a-url')).toMatch(/url/i)
+  })
 })
