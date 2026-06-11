@@ -23,17 +23,25 @@ describe('FormBuilder', () => {
   it('adds a field from the picker', async () => {
     renderBuilder()
     await userEvent.click(screen.getByRole('button', { name: /add field/i }))
-    await userEvent.click(screen.getByRole('menuitem', { name: /^text$/i }))
+    const modal = await screen.findByRole('dialog')
+    // FieldModal type grid: pick "text" (exact type, not textarea)
+    await userEvent.click(within(modal).getByRole('button', { name: /^text short text/i }))
+    // fill required Label and Field name inputs
+    await userEvent.type(within(modal).getByLabelText(/^label$/i), 'My Text')
+    // name auto-derives from label; click Finish
+    await userEvent.click(within(modal).getByRole('button', { name: /finish/i }))
     expect(useStore.getState().moduleById('mod-tickets')!.fields.length).toBe(10)
   })
 
-  it('opens the field sheet and edits the label', async () => {
+  it('opens the field modal and edits the label', async () => {
     renderBuilder()
-    await userEvent.click(screen.getByText('title'))
-    const sheet = await screen.findByRole('dialog')
-    const label = within(sheet).getByLabelText(/^label$/i)
+    // click the edit button (pencil icon) on the first field row
+    await userEvent.click(screen.getByRole('button', { name: /edit title/i }))
+    const modal = await screen.findByRole('dialog')
+    const label = within(modal).getByLabelText(/^label$/i)
     await userEvent.clear(label)
     await userEvent.type(label, 'Subject')
+    await userEvent.click(within(modal).getByRole('button', { name: /^save$/i }))
     expect(useStore.getState().moduleById('mod-tickets')!.fields[0].label).toBe('Subject')
   })
 

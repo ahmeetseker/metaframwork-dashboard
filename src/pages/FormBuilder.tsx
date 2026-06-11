@@ -4,22 +4,19 @@ import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
-import type { Field, FieldType } from '@/lib/types'
-import { FIELD_TYPES } from '@/lib/types'
+import type { Field } from '@/lib/types'
 import { t } from '@/i18n/t'
 import { useStore } from '@/store'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { SchemaForm } from '@/components/SchemaForm'
-import { CanvasField } from './builder/CanvasField'
-import { FieldSheet } from './builder/FieldSheet'
+import { AiBar } from './builder/AiBar'
+import { FieldModal } from './builder/FieldModal'
+import { FieldRow } from './builder/FieldRow'
 
 const uid = () => crypto.randomUUID()
 
@@ -30,8 +27,10 @@ export function FormBuilder() {
   const modules = useStore((s) => s.modules)
   const module = useStore((s) => (moduleId ? s.moduleById(moduleId) : s.modules[0]))
   const addField = useStore((s) => s.addField)
+  const removeField = useStore((s) => s.removeField)
   const reorderFields = useStore((s) => s.reorderFields)
   const replaceFields = useStore((s) => s.replaceFields)
+  const [adding, setAdding] = useState(false)
   const [jsonDraft, setJsonDraft] = useState<string | null>(null)
   const [jsonError, setJsonError] = useState<string | null>(null)
 
@@ -47,18 +46,13 @@ export function FormBuilder() {
     }
   }
 
-  const addNew = (type: FieldType) => {
-    const n = module.fields.length + 1
-    const field: Field = {
-      id: `fld-${uid().slice(0, 8)}`,
-      name: `${type}_${n}`,
-      label: `New ${type} field`,
-      type,
-      ...(type === 'select' ? { options: ['option_a', 'option_b'] } : {}),
-      ...(type === 'relation' ? { relation: { module: modules[0]?.name ?? '' } } : {}),
-    }
-    addField(module.id, field)
-    setSearchParams({ field: field.id })
+  const duplicateField = (f: Field) => {
+    const names = new Set(module.fields.map((x) => x.name))
+    let name = `${f.name}_copy`
+    let i = 2
+    while (names.has(name)) name = `${f.name}_copy${i++}`
+    addField(module.id, { ...structuredClone(f), id: `fld-${uid().slice(0, 8)}`, name })
+    toast.success(t('builder.row.duplicated', { name }))
   }
 
   const applyJson = () => {
@@ -75,7 +69,7 @@ export function FormBuilder() {
   }
 
   return (
-    <div className="mx-auto max-w-[720px] space-y-5">
+    <div className="mx-auto max-w-4xl space-y-5">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">{t('builder.title')}</h1>
         <Select value={module.id} onValueChange={(id) => navigate(`/builder/${id}`)}>
@@ -89,64 +83,59 @@ export function FormBuilder() {
       </div>
 
       <section className="glass p-5">
-      <Tabs defaultValue="visual">
-        <TabsList>
-          <TabsTrigger value="visual">{t('builder.tabs.visual')}</TabsTrigger>
-          <TabsTrigger value="json">{t('builder.tabs.json')}</TabsTrigger>
-          <TabsTrigger value="preview">{t('builder.tabs.preview')}</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="visual">
+          <TabsList>
+            <TabsTrigger value="visual">{t('builder.tabs.visual')}</TabsTrigger>
+            <TabsTrigger value="json">{t('builder.tabs.json')}</TabsTrigger>
+            <TabsTrigger value="preview">{t('builder.tabs.preview')}</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="visual" className="pt-4">
-          {module.fields.length === 0 && (
-            <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-              {t('builder.emptyCanvas')}
-            </p>
-          )}
-          <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-            <SortableContext items={module.fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
-              <div className="flex flex-wrap gap-3">
-                {module.fields.map((f) => (
-                  <CanvasField key={f.id} field={f} selected={f.id === selectedFieldId}
-                    onSelect={() => setSearchParams({ field: f.id })} />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="mt-3 w-full border-dashed">
-                <Plus className="size-4" aria-hidden /> {t('builder.addFieldHint')}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="grid grid-cols-2">
-              {FIELD_TYPES.map((type) => (
-                <DropdownMenuItem key={type} className="font-mono text-xs" onSelect={() => addNew(type)}>
-                  {type}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TabsContent>
+          <TabsContent value="visual" className="space-y-3 pt-4">
+            <AiBar module={module} />
+            {module.fields.length === 0 && (
+              <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+                {t('builder.emptyCanvas')}
+              </p>
+            )}
+            <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+              <SortableContext items={module.fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
+                <div className="flex flex-wrap gap-3">
+                  {module.fields.map((f) => (
+                    <FieldRow key={f.id} field={f} selected={f.id === selectedFieldId}
+                      onEdit={() => setSearchParams({ field: f.id })}
+                      onDuplicate={() => duplicateField(f)}
+                      onDelete={() => { removeField(module.id, f.id); toast.success(t('builder.fieldDeleted')) }} />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+            <Button variant="outline" className="w-full border-dashed" onClick={() => setAdding(true)}>
+              <Plus className="size-4" aria-hidden /> {t('builder.addField')}
+            </Button>
+          </TabsContent>
 
-        <TabsContent value="json" className="space-y-3 pt-4">
-          <Textarea rows={20} className="font-mono text-xs leading-relaxed"
-            value={jsonDraft ?? schemaJson}
-            onChange={(e) => setJsonDraft(e.target.value)} />
-          {jsonError && <p role="alert" className="font-mono text-xs text-destructive">{jsonError}</p>}
-          <Button onClick={applyJson}>{t('builder.applyJson')}</Button>
-        </TabsContent>
+          <TabsContent value="json" className="space-y-3 pt-4">
+            <Textarea rows={20} className="font-mono text-xs leading-relaxed"
+              value={jsonDraft ?? schemaJson}
+              onChange={(e) => setJsonDraft(e.target.value)} />
+            {jsonError && <p role="alert" className="font-mono text-xs text-destructive">{jsonError}</p>}
+            <Button onClick={applyJson}>{t('builder.applyJson')}</Button>
+          </TabsContent>
 
-        <TabsContent value="preview" className="pt-4">
-          <p className="pb-4 text-xs text-muted-foreground">{t('builder.previewNote')}</p>
-          <div className="rounded-lg border border-border bg-foreground/5 p-5">
-            <SchemaForm key={schemaJson} module={module} submitLabel={t('data.save')}
-              onSubmit={() => toast.success(t('data.saved'))} />
-          </div>
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="preview" className="pt-4">
+            <p className="pb-4 text-xs text-muted-foreground">{t('builder.previewNote')}</p>
+            <div className="rounded-lg border border-border bg-foreground/5 p-5">
+              <SchemaForm key={schemaJson} module={module} submitLabel={t('data.save')}
+                onSubmit={() => toast.success(t('data.saved'))} />
+            </div>
+          </TabsContent>
+        </Tabs>
       </section>
 
-      <FieldSheet module={module} field={selectedField} onClose={() => setSearchParams({})} />
+      <FieldModal module={module} modules={modules}
+        open={adding || Boolean(selectedField)}
+        editField={selectedField}
+        onClose={() => { setAdding(false); setSearchParams({}) }} />
     </div>
   )
 }

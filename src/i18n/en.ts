@@ -56,7 +56,7 @@ export const en = {
     invalidJson: 'Invalid JSON — keeping last valid schema. {error}',
     jsonApplied: 'Schema updated from JSON',
     previewNote: 'Live preview — validation and conditional logic are real.',
-    emptyCanvas: 'No fields yet. Add one below or ask the AI.',
+    emptyCanvas: 'No fields yet. Add one below, or describe it to the AI above.',
     applyJson: 'Apply schema',
     typeDesc: {
       text: 'Short text — names & titles', textarea: 'Long prose — notes & descriptions',
