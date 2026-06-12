@@ -4,7 +4,7 @@
 
 :root {
   --font-sans-runtime: 'Inter Variable', system-ui, sans-serif;
-  --background: oklch(1 0 0);
+  --background: oklch(0.962 0.003 240);
   --foreground: oklch(0.18 0.008 230);
   --card: oklch(0.97 0.003 230);
   --card-foreground: oklch(0.18 0.008 230);
@@ -30,7 +30,7 @@
 }
 
 .dark {
-  --background: oklch(0.12 0.008 235);
+  --background: oklch(0.155 0.012 238);
   --foreground: oklch(0.95 0.004 230);
   --card: oklch(0.165 0.005 230);
   --card-foreground: oklch(0.95 0.004 230);
@@ -87,59 +87,83 @@
   --radius-glass: 24px;
 }
 
-/* Liquid glass material tokens (DESIGN.md §4 — design.dev generator: blur 26 / sat 140 / tint #0a0c14) */
+/* Liquid glass material tokens (DESIGN.md §4 v3 — true refraction: transparent tint,
+   SVG displacement via #lg-dist in index.html, pointer-tracked specular).
+   NOTE: backdrop chains are written literally in .glass/.glass-overlay (not as tokens):
+   the #lg-dist progressive-enhancement double declaration breaks through var(). */
 :root {
-  --glass-backdrop: blur(26px) saturate(140%);
   --glass-tint: radial-gradient(
     ellipse 130% 90% at 50% 0%,
-    rgb(255 255 255 / 0.72) 0%,
-    rgb(255 255 255 / 0.64) 45%,
-    rgb(255 255 255 / 0.60) 100%
+    rgb(255 255 255 / 0.70) 0%,
+    rgb(255 255 255 / 0.62) 45%,
+    rgb(252 253 255 / 0.55) 100%
+  );
+  --glass-tint-overlay: linear-gradient(
+    155deg,
+    rgb(255 255 255 / 0.34) 0%,
+    rgb(255 255 255 / 0.16) 50%,
+    rgb(255 255 255 / 0.26) 100%
   );
   --glass-shadow:
-    0 20px 58px -15px rgb(8 12 24 / 0.16),
-    0 1px 2px rgb(8 12 24 / 0.08),
-    inset 0 1px 1px rgb(255 255 255 / 0.8),
-    inset 0 0 0 1px rgb(255 255 255 / 0.45);
-  --glass-sheen: radial-gradient(ellipse 110% 65% at 50% -15%, rgb(255 255 255 / 0.5) 0%, transparent 70%);
+    0 18px 44px -14px rgb(35 45 70 / 0.30),
+    0 1px 2px rgb(35 45 70 / 0.08),
+    inset 0 0 20px rgb(255 255 255 / 0.50),
+    inset 0 -1.5px 1px rgb(35 45 70 / 0.12),
+    inset 0 1.5px 1px rgb(255 255 255 / 0.95),
+    inset 2px 0 6px -3px rgb(255 255 255 / 0.75),
+    inset -2px 0 6px -3px rgb(255 255 255 / 0.75);
   --glass-rim:
-    inset 0 0 0 0.5px rgb(255 255 255 / 0.6),
-    inset 0 1px 0 rgb(255 255 255 / 0.8),
-    inset 0 -1px 0 rgb(8 12 24 / 0.06);
+    inset 0 0 0 1px rgb(255 255 255 / 0.55),
+    inset 0 0 0 1.5px rgb(45 60 100 / 0.05);
+  --glass-sheen:
+    radial-gradient(240px circle at var(--glass-px, 50%) var(--glass-py, -40%), rgb(255 255 255 / 0.45) 0%, transparent 65%),
+    linear-gradient(155deg, rgb(255 255 255 / 0.20) 0%, transparent 30%, transparent 70%, rgb(255 255 255 / 0.10) 100%);
   --glass-fallback: oklch(0.97 0.003 230 / 0.97);
 }
 
 .dark {
   --glass-tint: radial-gradient(
     ellipse 130% 90% at 50% 0%,
-    rgb(10 12 20 / 0.63) 0%,
-    rgb(10 12 20 / 0.55) 45%,
-    rgb(10 12 20 / 0.50) 100%
+    rgb(22 26 38 / 0.58) 0%,
+    rgb(22 26 38 / 0.50) 45%,
+    rgb(22 26 38 / 0.44) 100%
+  );
+  --glass-tint-overlay: linear-gradient(
+    155deg,
+    rgb(40 46 66 / 0.38) 0%,
+    rgb(28 33 48 / 0.22) 50%,
+    rgb(36 42 60 / 0.30) 100%
   );
   --glass-shadow:
-    0 20px 58px -15px rgb(0 0 0 / 0.31),
+    0 20px 52px -15px rgb(0 0 0 / 0.45),
     0 1px 2px rgb(0 0 0 / 0.16),
-    inset 0 0 16px rgb(255 255 255 / 0.04),
-    inset 0 4px 8px -4px rgb(0 0 0 / 0.22),
-    inset 0 -1px 1px rgb(0 0 0 / 0.28),
-    inset 0 1px 1px rgb(255 255 255 / 0.10),
-    inset 0 0 0 1px rgb(255 255 255 / 0.06);
-  --glass-sheen: radial-gradient(ellipse 110% 65% at 50% -15%, rgb(255 255 255 / 0.12) 0%, transparent 70%);
-  --glass-rim:
-    inset 0 0 0 0.5px rgb(255 255 255 / 0.07),
-    inset 0 1px 0 rgb(255 255 255 / 0.10),
-    inset 0 -1px 0 rgb(255 255 255 / 0.06);
-  --glass-fallback: oklch(0.17 0.005 230 / 0.95);
+    inset 0 0 22px rgb(255 255 255 / 0.05),
+    inset 0 -1.5px 1px rgb(0 0 0 / 0.40),
+    inset 0 1.5px 1px rgb(255 255 255 / 0.22),
+    inset 2px 0 6px -3px rgb(255 255 255 / 0.10),
+    inset -2px 0 6px -3px rgb(255 255 255 / 0.10);
+  --glass-rim: inset 0 0 0 1px rgb(255 255 255 / 0.09);
+  --glass-sheen:
+    radial-gradient(240px circle at var(--glass-px, 50%) var(--glass-py, -40%), rgb(255 255 255 / 0.30) 0%, transparent 65%),
+    linear-gradient(155deg, rgb(255 255 255 / 0.14) 0%, transparent 30%, transparent 70%, rgb(255 255 255 / 0.07) 100%);
+  --glass-fallback: oklch(0.19 0.008 235 / 0.95);
 }
 
 @layer base {
   * { @apply border-border; }
   body { @apply bg-background text-foreground font-sans text-sm antialiased; }
-  /* Ambient ground (DESIGN.md §2, Ambient Rule): two static low-chroma glows so glass has light to refract */
+  /* Ambient grounds (DESIGN.md §2/§4 v3): light = neutral system gray with one
+     imperceptible top brightening (no colorful glows — Apple-faithful);
+     dark = "lifted dark" with livelier cobalt glows. */
+  body {
+    background-image: radial-gradient(ellipse 120% 80% at 50% -10%, rgb(255 255 255 / 0.65), transparent 60%);
+    background-attachment: fixed;
+  }
   .dark body {
     background-image:
-      radial-gradient(ellipse 80% 55% at 50% -10%, oklch(0.26 0.04 250 / 0.5), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 88% 110%, oklch(0.2 0.03 220 / 0.4), transparent 60%);
+      radial-gradient(ellipse 80% 70% at 18% 5%, oklch(0.34 0.055 240 / 0.6), transparent 62%),
+      radial-gradient(ellipse 65% 60% at 88% 88%, oklch(0.30 0.05 255 / 0.5), transparent 60%),
+      radial-gradient(ellipse 50% 45% at 65% 30%, oklch(0.32 0.04 225 / 0.3), transparent 55%);
     background-attachment: fixed;
   }
 }
@@ -155,9 +179,30 @@
     isolation: isolate;
     border-radius: var(--radius-glass);
     background: var(--glass-tint);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    backdrop-filter: var(--glass-backdrop);
+    /* literal double declaration — see plan header note on var() */
+    -webkit-backdrop-filter: blur(3px) saturate(170%) brightness(1.05);
+    backdrop-filter: blur(3px) saturate(170%) brightness(1.05);
+    backdrop-filter: url(#lg-dist) blur(3px) saturate(170%) brightness(1.05);
     box-shadow: var(--glass-shadow);
+  }
+  .dark .glass {
+    -webkit-backdrop-filter: blur(3px) saturate(170%);
+    backdrop-filter: blur(3px) saturate(170%);
+    backdrop-filter: url(#lg-dist) blur(3px) saturate(170%);
+  }
+  /* Floating tier (Sheet, Dialog, popovers, ⌘K, AI dock): clearer tint, heavier blur
+     for legibility over scrolling content, heavier drop */
+  .glass-overlay {
+    background: var(--glass-tint-overlay);
+    -webkit-backdrop-filter: blur(10px) saturate(170%) brightness(1.05);
+    backdrop-filter: blur(10px) saturate(170%) brightness(1.05);
+    backdrop-filter: url(#lg-dist) blur(10px) saturate(170%) brightness(1.05);
+    box-shadow: 0 32px 80px -20px rgb(0 0 0 / 0.45), var(--glass-shadow);
+  }
+  .dark .glass-overlay {
+    -webkit-backdrop-filter: blur(10px) saturate(170%);
+    backdrop-filter: blur(10px) saturate(170%);
+    backdrop-filter: url(#lg-dist) blur(10px) saturate(170%);
   }
   .glass::before {
     content: '';
@@ -169,6 +214,10 @@
     background: var(--glass-sheen);
     mix-blend-mode: screen;
     opacity: 0.55;
+    transition: opacity 180ms ease;
+  }
+  .glass:hover::before {
+    opacity: 0.95;
   }
   .glass::after {
     content: '';
@@ -178,10 +227,6 @@
     border-radius: inherit;
     pointer-events: none;
     box-shadow: var(--glass-rim);
-  }
-  /* Floating tier (Sheet, Dialog, popovers, ⌘K): same pane, heavier drop */
-  .glass-overlay {
-    box-shadow: 0 32px 80px -20px rgb(0 0 0 / 0.45), var(--glass-shadow);
   }
   /* Diff Card only (Brass Rule): the single permitted rim modification */
   .glass-brass {
@@ -228,6 +273,15 @@
 
 /* Reduced transparency: panes fall back to solid surfaces (DESIGN.md §4) */
 @media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--glass-fallback);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* High contrast: same opaque fallback as reduced transparency (DESIGN.md §4 v3) */
+@media (prefers-contrast: more) {
   .glass {
     background: var(--glass-fallback);
     -webkit-backdrop-filter: none;
