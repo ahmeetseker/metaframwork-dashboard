@@ -18,6 +18,7 @@ interface ForgeState {
   audit: AuditEntry[]
   env: Env
   activeFilters: Record<string, TableFilter[]>
+  sidebarCollapsed: boolean
 
   moduleById: (id: string) => ModuleDef | undefined
   moduleByName: (name: string) => ModuleDef | undefined
@@ -39,6 +40,7 @@ interface ForgeState {
   setRolePermission: (roleId: string, moduleId: string, perm: 'create' | 'read' | 'update' | 'delete', value: boolean) => void
   setFilters: (moduleId: string, filters: TableFilter[], actor?: Actor) => void
   applyDiff: (diff: AiDiff) => void
+  toggleSidebar: () => void
   resetDemo: () => void
 }
 
@@ -113,6 +115,7 @@ export const useStore = create<ForgeState>()(
   persist(
     (set, get) => ({
       ...seedState(),
+      sidebarCollapsed: false,
 
       moduleById: (id) => get().modules.find((m) => m.id === id),
       moduleByName: (name) => get().modules.find((m) => m.name === name),
@@ -307,6 +310,8 @@ export const useStore = create<ForgeState>()(
             break
         }
       },
+
+      toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
       resetDemo: () => set({ ...seedState() }),
     }),

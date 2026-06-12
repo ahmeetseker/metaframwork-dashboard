@@ -116,3 +116,17 @@ describe('store', () => {
     expect(taxNo.conditional!.rules[0].field).toBe('kind')
   })
 })
+
+describe('sidebar preference', () => {
+  it('toggles and survives resetDemo', () => {
+    const s = useStore.getState()
+    expect(s.sidebarCollapsed).toBe(false)
+    s.toggleSidebar()
+    expect(useStore.getState().sidebarCollapsed).toBe(true)
+    useStore.getState().resetDemo()
+    // UI preference, not demo data — must survive reset
+    expect(useStore.getState().sidebarCollapsed).toBe(true)
+    useStore.getState().toggleSidebar()
+    expect(useStore.getState().sidebarCollapsed).toBe(false)
+  })
+})

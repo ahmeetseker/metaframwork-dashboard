@@ -5,6 +5,7 @@ export const en = {
     dashboard: 'Dashboard', data: 'Data', modules: 'Modules',
     formBuilder: 'Form builder', theme: 'Theme & branding',
     apiExplorer: 'API explorer', auditLog: 'Audit log', roles: 'Roles & permissions',
+    collapseSidebar: 'Collapse sidebar', expandSidebar: 'Expand sidebar',
   },
   topbar: {
     search: 'Search or run a command…', env: 'Environment',
