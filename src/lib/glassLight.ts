@@ -11,6 +11,7 @@ interface PointerLike {
 }
 
 let active: HTMLElement | null = null
+let initialized = false
 
 function clearPane(el: HTMLElement) {
   el.style.removeProperty('--glass-px')
@@ -32,9 +33,12 @@ export function handlePointerMove(e: PointerLike) {
 export function initGlassLight({ doc = document, win = window }: { doc?: Document; win?: Window } = {}): boolean {
   if (win.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
   if (win.matchMedia('(pointer: coarse)').matches) return false
+  if (initialized) return true
   const raf = win.requestAnimationFrame?.bind(win) ?? ((cb: FrameRequestCallback) => { cb(0); return 0 })
   let pending = false
   let last: PointerLike | null = null
+  initialized = true
+  // Listener is app-lifetime by design — no teardown needed.
   doc.addEventListener(
     'pointermove',
     (e) => {

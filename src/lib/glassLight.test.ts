@@ -23,7 +23,18 @@ describe('glassLight', () => {
   })
 
   it('attaches otherwise', () => {
-    expect(initGlassLight({ win: fakeWin(false, false), doc: document })).toBe(true)
+    const doc = { addEventListener: vi.fn() } as unknown as Document
+    expect(initGlassLight({ win: fakeWin(false, false), doc })).toBe(true)
+    expect(doc.addEventListener).toHaveBeenCalledTimes(1)
+    expect(doc.addEventListener).toHaveBeenCalledWith('pointermove', expect.any(Function), { passive: true })
+  })
+
+  it('second call short-circuits on initialized: returns true without adding a second listener', () => {
+    // Uses the same module-level initialized=true state; the stub doc from the
+    // previous test is out of scope so we pass a fresh one to prove no new attach.
+    const doc2 = { addEventListener: vi.fn() } as unknown as Document
+    expect(initGlassLight({ win: fakeWin(false, false), doc: doc2 })).toBe(true)
+    expect(doc2.addEventListener).toHaveBeenCalledTimes(0)
   })
 
   it('sets specular variables on the hovered pane and clears them on leave', () => {
